@@ -11,10 +11,6 @@ import java.math.BigDecimal;
 public class Weather
 {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long id;
-
 	@NotNull(message = "The temperature must not be null")
 	@DecimalMin(value = "-100.0", message = "Temperature is too low")
 	@DecimalMax(value = "100.0", message = "Temperature is too high")
