@@ -2,6 +2,7 @@ package com.weather.service;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ public class Weather
 {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long id;
 
 	@NotNull(message = "The temperature must not be null")

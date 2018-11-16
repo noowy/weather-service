@@ -30,5 +30,11 @@ public class WeatherController
 	{
 		return new ResponseEntity<>(weatherRepo.findAll(), HttpStatus.OK);
 	}
+
+	@GetMapping(path = "/check_geo")
+	public ResponseEntity<String> geoCheck()
+	{
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 }
 

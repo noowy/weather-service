@@ -25,4 +25,11 @@ public class ApiController
 	{
 		return new ResponseEntity<>(weatherRepo.getLastTenWeathers(), HttpStatus.OK);
 	}
+
+	@GetMapping(path = "/check_geo")
+	public ResponseEntity<String> geoCheck()
+	{
+		String cityName = ServiceApplication.geo.retrieveCity("30.5677776,-92.7969437");
+		return new ResponseEntity<>(cityName, HttpStatus.OK);
+	}
 }
