@@ -10,6 +10,6 @@ import java.util.ArrayList;
 @Repository
 public interface WeatherRepository extends CrudRepository<Weather, Integer>
 {
-	@Query(value = "SELECT * FROM Weather ORDER BY id DESC LIMIT 10", nativeQuery = true)
+	@Query(value = "SELECT * FROM Weather ORDER BY INPUT_TIME DESC LIMIT 10", nativeQuery = true)
 	ArrayList<Weather> getLastTenWeathers();
 }

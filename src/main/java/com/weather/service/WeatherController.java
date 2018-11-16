@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import java.text.FieldPosition;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Controller
 public class WeatherController
@@ -19,8 +24,17 @@ public class WeatherController
 	WeatherRepository weatherRepo;
 
 	@PostMapping(path = "/add_weather", consumes = "application/json")
-	public ResponseEntity<Integer> handleNewWeather(@Valid @RequestBody Weather weather)
+	public ResponseEntity<Integer> handleNewWeather(@Valid @RequestBody Weather weather) throws ParseException
 	{
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date currentDate = new Date(System.currentTimeMillis());
+		String dateFormatted;
+
+		dateFormatted = formatter.format(currentDate);
+		currentDate = formatter.parse(dateFormatted);
+
+		weather.inputTime = currentDate;
+
 		weatherRepo.save(weather);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
