@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -21,15 +22,12 @@ public class ApiController
 	WeatherRepository weatherRepo;
 
 	@GetMapping(path = "/get_weather")
-	public ResponseEntity<Iterable> returnLastTen()
+	public ResponseEntity<Iterable> returnLastTen(@RequestParam(name = "city", required = false) String cityName)
 	{
-		return new ResponseEntity<>(weatherRepo.getLastTenWeathers(), HttpStatus.OK);
-	}
-
-	@GetMapping(path = "/check_geo")
-	public ResponseEntity<String> geoCheck()
-	{
-		String cityName = ServiceApplication.geo.retrieveCity("30.5677776,-92.7969437");
-		return new ResponseEntity<>(cityName, HttpStatus.OK);
+		return cityName == null
+				?
+				new ResponseEntity<>(weatherRepo.getLastTenWeathers(), HttpStatus.OK)
+				:
+				new ResponseEntity<>(weatherRepo.getLastTenWeathers(cityName.toLowerCase()), HttpStatus.OK);
 	}
 }

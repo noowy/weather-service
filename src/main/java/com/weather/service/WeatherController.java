@@ -19,11 +19,11 @@ import java.util.Date;
 @Controller
 public class WeatherController
 {
+	// TODO: add separate endpoint for updating weather in repo
 
 	@Autowired
 	WeatherRepository weatherRepo;
 
-	// TODO: Override findByID and existsByID methods of repo to check whether city was already retrieved
 	@PostMapping(path = "/add_weather", consumes = "application/json")
 	public ResponseEntity<Integer> handleNewWeather(@Valid @RequestBody Weather weather) throws ParseException
 	{
@@ -37,7 +37,6 @@ public class WeatherController
 		weather.inputTime = currentDate;
 
 		String city = ServiceApplication.geo.retrieveCity(weather.coordinates);
-
 		if (city != null)
 			weather.city = ServiceApplication.geo.retrieveCity(weather.coordinates);
 		else
@@ -50,13 +49,11 @@ public class WeatherController
 	@GetMapping(path = "/get_weather")
 	public ResponseEntity<Iterable> returnWeather(@RequestParam(name = "coords", required = false) String coordinates)
 	{
-		return new ResponseEntity<>(weatherRepo.findAll(), HttpStatus.OK);
-	}
-
-	@GetMapping(path = "/check_geo")
-	public ResponseEntity<String> geoCheck()
-	{
-		return new ResponseEntity<>(HttpStatus.OK);
+		return coordinates == null
+				?
+				new ResponseEntity<>(weatherRepo.findAll(), HttpStatus.OK)
+				:
+				new ResponseEntity<>(weatherRepo.findByCoords(coordinates), HttpStatus.OK);
 	}
 }
 

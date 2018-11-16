@@ -12,4 +12,10 @@ public interface WeatherRepository extends CrudRepository<Weather, Integer>
 {
 	@Query(value = "SELECT * FROM Weather ORDER BY INPUT_TIME DESC LIMIT 10", nativeQuery = true)
 	ArrayList<Weather> getLastTenWeathers();
+
+	@Query(value = "SELECT * FROM Weather WHERE CITY=?1 ORDER BY INPUT_TIME DESC LIMIT 10", nativeQuery = true)
+	ArrayList<Weather> getLastTenWeathers(String cityName);
+
+	@Query(value = "SELECT * FROM Weather WHERE COORDINATES=?1", nativeQuery = true)
+	ArrayList<Weather> findByCoords(String coords);
 }

@@ -4,20 +4,10 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Geodecoder
 {
-
-	private enum Border
-	{
-		LEFT,
-		RIGHT,
-		TOP,
-		BOTTOM
-	}
-
 	private enum Direction
 	{
 		TO_LEFT,
@@ -28,6 +18,12 @@ public class Geodecoder
 	};
 
 	private ArrayList<City> citiesList;
+
+	// TODO: find/calculate/etc. average radius of a city
+	// also this parameter can be used as accuracy of city retrieving
+	// i.e. the higher this parameter the better chances are to retrieve a city
+	// yet it will be most likely inaccurate
+	private static final double averageCityRadius = 2500;
 
 	public Geodecoder()
 	{
@@ -45,7 +41,9 @@ public class Geodecoder
 		return foundCity == null ? null : foundCity.name;
 	}
 
-	private double getKmAtLat(double latitude)
+
+	// returns meter equivalent of one latitudal degree at specified latitude
+	private double getLatDegInMeters(double latitude)
 	{
 		return 111132.92 -
 				559.82 * Math.cos(2 * Math.toRadians(latitude)) +
@@ -53,7 +51,8 @@ public class Geodecoder
 				- 0.0023 * Math.cos(6 * Math.toRadians(latitude));
 	}
 
-	private double getKmAtLong(double latitude)
+	// returns meter equivalent of one longitudal degree at specified latitude
+	private double getLongDegInMeters(double latitude)
 	{
 		return 111412.84 * Math.cos(Math.toRadians(latitude)) -
 				93.5 * Math.cos(3 * Math.toRadians(latitude)) +
@@ -83,7 +82,7 @@ public class Geodecoder
 		while (start <= end)
 		{
 			roundingBox = getRoundingBox(citiesList.get(middle).latitude,
-					citiesList.get(middle).longitude, 1500);
+					citiesList.get(middle).longitude, averageCityRadius);
 			direction = isInsideBox(roundingBox, latitude, longitude);
 
 			if (direction == Direction.TO_RIGHT)
@@ -105,29 +104,29 @@ public class Geodecoder
 	{
 		int pos = cityPosInList;
 		double[] cityRoundingBox = getRoundingBox(citiesList.get(pos).latitude,
-				citiesList.get(pos).longitude, 1500);;
-		double[] coordsRoundingBox = getRoundingBox(latitude, longitude, 1500);
+				citiesList.get(pos).longitude, averageCityRadius);;
+		double[] coordsRoundingBox = getRoundingBox(latitude, longitude, averageCityRadius);
 
 		// first it goes to the right of the array on given latitude
 		while (doBoxesCrossHorizontal(coordsRoundingBox, cityRoundingBox))
 		{
 			pos++;
 			cityRoundingBox = getRoundingBox(citiesList.get(pos).latitude,
-					citiesList.get(pos).longitude, 1500);
+					citiesList.get(pos).longitude, averageCityRadius);
 			if (isInsideBox(cityRoundingBox, latitude, longitude) == Direction.HERE)
 				return citiesList.get(pos);
 		}
 
 		pos = cityPosInList;
 		cityRoundingBox = getRoundingBox(citiesList.get(pos).latitude,
-				citiesList.get(pos).longitude, 1500);;
+				citiesList.get(pos).longitude, averageCityRadius);;
 
 		// then to the left of the array
 		while (doBoxesCrossHorizontal(coordsRoundingBox, cityRoundingBox))
 		{
 			pos--;
 			cityRoundingBox = getRoundingBox(citiesList.get(pos).latitude,
-					citiesList.get(pos).longitude, 1500);
+					citiesList.get(pos).longitude, averageCityRadius);
 			if (isInsideBox(cityRoundingBox, latitude, longitude) == Direction.HERE)
 				return citiesList.get(pos);
 		}
@@ -153,8 +152,8 @@ public class Geodecoder
 	{
 		double[] roundingBox = new double[4];
 
-		double deltaLat = radiusInMeters / 1000 / getKmAtLat(latitude);
-		double deltaLong = radiusInMeters / 1000 / getKmAtLong(latitude);
+		double deltaLat = radiusInMeters / getLatDegInMeters(latitude);
+		double deltaLong = radiusInMeters / getLongDegInMeters(latitude);
 
 		// setting corners of rounding box
 		roundingBox[0] = latitude - deltaLat;
