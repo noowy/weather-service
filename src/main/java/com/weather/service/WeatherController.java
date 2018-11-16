@@ -23,6 +23,7 @@ public class WeatherController
 	@Autowired
 	WeatherRepository weatherRepo;
 
+	// TODO: Override findByID and existsByID methods of repo to check whether city was already retrieved
 	@PostMapping(path = "/add_weather", consumes = "application/json")
 	public ResponseEntity<Integer> handleNewWeather(@Valid @RequestBody Weather weather) throws ParseException
 	{
@@ -34,6 +35,13 @@ public class WeatherController
 		currentDate = formatter.parse(dateFormatted);
 
 		weather.inputTime = currentDate;
+
+		String city = ServiceApplication.geo.retrieveCity(weather.coordinates);
+
+		if (city != null)
+			weather.city = ServiceApplication.geo.retrieveCity(weather.coordinates);
+		else
+			weather.city = "Unknown";
 
 		weatherRepo.save(weather);
 		return new ResponseEntity<>(HttpStatus.CREATED);
