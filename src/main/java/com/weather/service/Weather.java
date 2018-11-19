@@ -24,6 +24,6 @@ public class Weather
 	@Column(columnDefinition = "VARCHAR(255) DEFAULT \'UNKNOWN\'")
 	public String city;
 
-	@Column(columnDefinition = "TIMESTAMP(26,6) NOT NULL DEFAULT CURR0ENT_TIMESTAMP")
+	@Column(columnDefinition = "TIMESTAMP(26,6) NOT NULL DEFAULT CURRENT_TIMESTAMP")
 	public Date inputTime;
 }

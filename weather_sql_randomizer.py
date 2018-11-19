@@ -13,10 +13,9 @@ def getSQL(amount):
 		numOfCity = randint(0, amountOfCities)
 		citiesLine = linecache.getline('./src/main/resources/cities.csv', numOfCity).rstrip().split(',')
 		coords = '\'' + citiesLine[1] + ',' + citiesLine[2] + '\'' 
-		sqlScript.write(sql + temp + ', ' + coords + ', \'' + citiesLine[0] + '\');' + os.linesep)
-
+		sqlScript.write(sql + temp + ', ' + coords + ', \'' + citiesLine[0].encode('string_escape') + '\');' + os.linesep)
+		
 if __name__=='__main__':
-	getSQL(25)
 	reload(sys)
 	if len(sys.argv) != 2:
 		print 'usage ./weather_sql_randomizer.py --amount=*amount of sqls needed*'

@@ -198,12 +198,6 @@ public class Geodecoder
 		public String name;
 		public Double latitude;
 		public Double longitude;
-
-		public boolean isInferiorThan(City other) // by superior means stands higher or farther on the cartesian plane
-		{
-			return this.latitude < other.latitude ||
-					(this.latitude.equals(other.latitude) && this.longitude < other.longitude);
-		}
 	}
 }
 
